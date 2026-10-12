@@ -1,0 +1,9 @@
+{
+  "name": "MoA Prompt Studio",
+  "short_name": "MoA Prompt",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f8f5f3",
+  "theme_color": "#f7f3f1",
+  "description": "스톡 일러스트 프롬프트 제작기"
+}
