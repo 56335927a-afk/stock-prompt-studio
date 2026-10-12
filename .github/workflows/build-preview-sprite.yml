@@ -17,6 +17,27 @@ jobs:
         run: |
           cat hires_parts/*.txt | tr -d '\n\r ' | base64 -d > verified-sprite-hi.webp
           test -s verified-sprite-hi.webp
+      - name: Validate WebP integrity and dimensions
+        shell: python
+        run: |
+          from pathlib import Path
+          import struct
+          b=Path('verified-sprite-hi.webp').read_bytes()
+          assert b[:4] == b'RIFF' and b[8:12] == b'WEBP', 'Not a WebP RIFF file'
+          declared=struct.unpack_from('<I',b,4)[0]+8
+          assert len(b) == declared, f'Truncated WebP: actual={len(b)}, declared={declared}'
+          chunk=b[12:16]
+          if chunk == b'VP8X':
+              w=1+int.from_bytes(b[24:27],'little')
+              h=1+int.from_bytes(b[27:30],'little')
+          elif chunk == b'VP8 ':
+              assert b[23:26] == b'\x9d\x01\x2a', 'Bad VP8 frame header'
+              w=int.from_bytes(b[26:28],'little') & 0x3fff
+              h=int.from_bytes(b[28:30],'little') & 0x3fff
+          else:
+              raise AssertionError(f'Unexpected WebP chunk {chunk!r}')
+          print(f'WebP OK: {w}x{h}, {len(b)} bytes')
+          assert (w,h) == (1600,900), f'Unexpected dimensions: {w}x{h}'
       - name: Commit high-resolution preview image
         shell: bash
         run: |
