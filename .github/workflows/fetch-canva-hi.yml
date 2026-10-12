@@ -1,0 +1,47 @@
+name: Fetch full resolution preview asset
+on:
+  push:
+    paths:
+      - '.github/workflows/fetch-canva-hi.yml'
+permissions:
+  contents: write
+jobs:
+  fetch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch full-resolution Canva asset
+        shell: bash
+        run: |
+          set -e
+          URL='https://media.canva.com/v2/image-resize/format:WEBP/height:900/quality:90/uri:ifs%3A%2F%2FM%2F3cb22bd8-d304-4690-a404-a221d5578dfc/watermark:F/width:1600?csig=AAAAAAAAAAAAAAAAAAAAAN2cuDl0T5yCRJVQ7VitDFN_JKW6pcPbVgnUWoLEGU4M&exp=1791824989&osig=AAAAAAAAAAAAAAAAAAAAAE4M6o1BOeuBqJKG2hC8_Zn3DWe3jdevXLpujSvTSpWe&signer=media-rpc&token=AAIAAU0AJDNjYjIyYmQ4LWQzMDQtNDY5MC1hNDA0LWEyMjFkNTU3OGRmYwAAAAABoTEXi0iOAk2YDZF8vQKtZRBzv0aFRi2VWXnrOBXll7PGXBYorg'
+          curl -L --fail --retry 2 "$URL" -o verified-sprite-hi.webp
+          file verified-sprite-hi.webp
+      - name: Validate 1600x900 WebP
+        shell: python
+        run: |
+          from pathlib import Path
+          import struct
+          b=Path('verified-sprite-hi.webp').read_bytes()
+          assert b[:4] == b'RIFF' and b[8:12] == b'WEBP', b[:16]
+          declared=struct.unpack_from('<I',b,4)[0]+8
+          assert len(b)==declared, (len(b),declared)
+          chunk=b[12:16]
+          if chunk==b'VP8X':
+              w=1+int.from_bytes(b[24:27],'little'); h=1+int.from_bytes(b[27:30],'little')
+          elif chunk==b'VP8 ':
+              w=int.from_bytes(b[26:28],'little') & 0x3fff; h=int.from_bytes(b[28:30],'little') & 0x3fff
+          else:
+              raise AssertionError(chunk)
+          print('validated',w,h,len(b))
+          assert (w,h)==(1600,900),(w,h)
+      - name: Commit full-resolution preview
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add verified-sprite-hi.webp
+          git diff --cached --quiet && exit 0
+          git commit -m 'Replace previews with full-resolution asset'
+          git push
