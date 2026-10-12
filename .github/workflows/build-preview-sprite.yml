@@ -2,7 +2,6 @@ name: Build clean high-resolution verified preview sprite
 on:
   push:
     paths:
-      - 'hires_parts/**'
       - '.github/workflows/build-preview-sprite.yml'
 permissions:
   contents: write
@@ -12,14 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Decode high-resolution source
+      - name: Install image tools and decode committed source
         shell: bash
         run: |
-          cat hires_parts/*.txt | tr -d '\n\r ' | base64 -d > verified-sprite-hi.webp
           test -s verified-sprite-hi.webp
-      - name: Install image tools
-        shell: bash
-        run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq webp
           python -m pip install --quiet pillow numpy
@@ -99,7 +94,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add verified-sprite-hi.webp verified-sprite-clean.webp
+          git add verified-sprite-clean.webp
           git diff --cached --quiet && exit 0
           git commit -m "Build clean high-resolution AI preview sprite"
           git push
