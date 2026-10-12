@@ -1,0 +1,28 @@
+name: Build verified preview sprite
+on:
+  push:
+    paths:
+      - 'sprite72_parts/**'
+      - '.github/workflows/build-preview-sprite.yml'
+permissions:
+  contents: write
+jobs:
+  build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Decode verified preview image
+        shell: bash
+        run: |
+          cat sprite72_parts/00.txt sprite72_parts/01.txt sprite72_parts/02.txt | tr -d '\n\r ' | base64 -d > verified-sprite.jpg
+          test -s verified-sprite.jpg
+      - name: Commit verified preview image
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add verified-sprite.jpg
+          git diff --cached --quiet && exit 0
+          git commit -m "Add verified AI style preview sprite"
+          git push
