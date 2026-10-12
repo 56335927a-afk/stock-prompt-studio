@@ -1,36 +1,8 @@
-/* PickStock — clean, enlarged, verified AI-generated style previews */
-.exampleThumb{
-  width:100%;
-  aspect-ratio:8/5;
-  height:auto!important;
-  font-size:0!important;
-  background-color:#fcf9f7!important;
-  background-image:url('verified-sprite-clean.jpg?v=7')!important;
-  background-repeat:no-repeat!important;
-  background-size:800% 700%!important;
-  border:1px solid rgba(93,70,60,.08);
-  overflow:hidden;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.45);
-  image-rendering:auto;
-}
-.styleTitleNew{display:flex;align-items:center;gap:5px;min-width:0}
-.styleTitleNew .miniIcon{font-size:14px;line-height:1;flex:0 0 auto}
-.styleTitleNew strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:0!important}
-.styleTitleNew .star{position:static!important;margin-left:auto;bottom:auto!important;right:auto!important;flex:0 0 auto}
-.carrotHint{font-size:11px;font-weight:800;color:#746963;margin:0 0 9px;display:flex;gap:6px;align-items:center;line-height:1.45}
-.carrotHint:before{content:'✓';display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#e5efe7;color:#54755c;font-size:11px;flex:0 0 auto}
-.selectedPreview{
-  width:160px;
-  aspect-ratio:8/5;
-  height:auto;
-  border-radius:14px;
-  background-color:#fcf9f7;
-  background-image:url('verified-sprite-clean.jpg?v=7');
-  background-repeat:no-repeat;
-  background-size:800% 700%;
-  border:1px solid #eaded8;
-  flex:0 0 auto;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.5);
-  image-rendering:auto;
-}
+/* PickStock — temporarily hide low-quality previews while true HQ samples are rebuilt */
+.exampleThumb{width:100%;aspect-ratio:8/5;height:auto!important;font-size:0!important;background:#fbf8f6!important;border:1px solid rgba(93,70,60,.08);overflow:hidden;display:grid!important;place-items:center!important;position:relative!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)}
+.exampleThumb:after{content:'실제 고화질 예시 준비 중';font-size:11px;font-weight:800;color:#8a7c76;letter-spacing:-.02em}
+.styleTitleNew{display:flex;align-items:center;gap:5px;min-width:0}.styleTitleNew .miniIcon{font-size:14px;line-height:1;flex:0 0 auto}.styleTitleNew strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:0!important}.styleTitleNew .star{position:static!important;margin-left:auto;bottom:auto!important;right:auto!important;flex:0 0 auto}
+.carrotHint{font-size:11px;font-weight:800;color:#746963;margin:0 0 9px;display:flex;gap:6px;align-items:center;line-height:1.45}.carrotHint:before{content:'↻';display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#f4e8e3;color:#8c675c;font-size:11px;flex:0 0 auto}
+.selectedPreview{width:160px;aspect-ratio:8/5;height:auto;border-radius:14px;background:#fbf8f6;display:grid!important;place-items:center!important;border:1px solid #eaded8;flex:0 0 auto;font-size:0!important;position:relative!important}
+.selectedPreview:after{content:'실제 고화질 예시 준비 중';font-size:11px;font-weight:800;color:#8a7c76;text-align:center;padding:8px}
 @media(max-width:460px){.selectedPreview{width:126px}}
