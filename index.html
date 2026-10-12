@@ -29,7 +29,7 @@ textarea{min-height:355px;resize:vertical;line-height:1.55;font-size:13px}.btn{b
 @media(max-width:880px){.layout{grid-template-columns:1fr}.styles{grid-template-columns:repeat(2,1fr);max-height:none}.mobilebar{display:block}.page{padding-bottom:100px}textarea{min-height:290px}}
 @media(max-width:460px){.hero h1{font-size:25px}.row{display:grid;grid-template-columns:1fr}.reco{grid-template-columns:1fr}.tools{grid-template-columns:1fr 1fr}.favonly{grid-column:1/-1;height:42px}.settings{grid-template-columns:1fr}.actions{grid-template-columns:1fr}}
 </style>
-<link rel="stylesheet" href="preview.css?v=1">
+<link rel="stylesheet" href="preview.css?v=3">
 </head>
 <body>
 <div class="page">
@@ -75,6 +75,6 @@ window.addEventListener('error',e=>msg('오류: '+(e.message||'다시 시도해�
 document.addEventListener('DOMContentLoaded',()=>{restore();setMonthBadge();renderCats();renderRecent();updateSelected();renderStyles();season();$('season').onclick=season;$('random').onclick=randomAny;$('make').onclick=build;$('copy').onclick=copyPrompt;$('copy2').onclick=copyPrompt;$('variation').onclick=variation;$('chat').onclick=openChat;$('chat2').onclick=openChat;$('cat').onchange=renderStyles;$('search').oninput=renderStyles;$('favOnly').onchange=renderStyles;$('keyword').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();build()}};['five','space','transparent','notext'].forEach(id=>$(id).onchange=()=>{if($('prompt').value.trim())build()})})
 })();
 </script>
-<script src="preview.js?v=1"></script>
+<script src="preview.js?v=3"></script>
 </body>
 </html>
