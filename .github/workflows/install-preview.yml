@@ -1,0 +1,32 @@
+name: Install PickStock carrot previews
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/install-preview.yml'
+permissions:
+  contents: write
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inject preview assets
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          if 'preview.css?v=1' not in s:
+              s=s.replace('</head>','<link rel="stylesheet" href="preview.css?v=1">\n</head>')
+          if 'preview.js?v=1' not in s:
+              s=s.replace('</body>','<script src="preview.js?v=1"></script>\n</body>')
+          p.write_text(s,encoding='utf-8')
+          Path('.github/workflows/install-preview.yml').unlink()
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html .github/workflows/install-preview.yml
+          git commit -m "Install carrot style previews"
+          git push
