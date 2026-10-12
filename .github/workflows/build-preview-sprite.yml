@@ -18,7 +18,13 @@ jobs:
           cat hires_parts/*.txt | tr -d '\n\r ' | base64 -d > verified-sprite-hi.webp
           test -s verified-sprite-hi.webp
       - name: Install image tools
-        run: python -m pip install --quiet pillow numpy
+        shell: bash
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq webp
+          python -m pip install --quiet pillow numpy
+          dwebp verified-sprite-hi.webp -o verified-source.png >/dev/null
+          test -s verified-source.png
       - name: Reframe and sharpen 52 verified previews
         shell: python
         run: |
@@ -26,7 +32,7 @@ jobs:
           import numpy as np
           from pathlib import Path
 
-          src=Image.open('verified-sprite-hi.webp').convert('RGB')
+          src=Image.open('verified-source.png').convert('RGB')
           cols,rows=8,7
           out_w,out_h=480,300
           bg=(252,249,247)
