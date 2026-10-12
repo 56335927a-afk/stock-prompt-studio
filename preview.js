@@ -1,9 +1,53 @@
 (function(){
-const keys={"파스텔 크레용":"crayon","브라운 모노라인":"mono","귀여운 플랫 2D":"flat","클레이 3D":"clay","수채화":"water","종이 콜라주":"paper","과슈":"gouache","색연필":"pencil","연필 스케치":"sketch","펜&잉크":"ink","마커 드로잉":"marker","동화책":"story","치비 캐릭터":"chibi","카와이 스티커":"kawaii","미니멀 플랫":"minimal","듀오톤 벡터":"duotone","기하학 아이콘":"geo","얇은 모노라인":"thin","두꺼운 아웃라인":"bold","아이소메트릭":"iso","글로시 3D":"glossy","매트 3D":"matte","소프트 토이 3D":"plush","풍선 3D":"balloon","펠트 공예":"felt","자수":"embroider","니트":"knit","도자기":"ceramic","목각":"wood","아크릴 페인팅":"acrylic","오일 페인팅":"oil","파스텔 초크":"chalk","레트로 70s":"retro70","레트로 80s":"retro80","Y2K":"y2k","빈티지 포스터":"poster","코티지코어":"cottage","북유럽 미니멀":"scandi","럭셔리 미니멀":"luxury","에디토리얼":"editorial","소프트 그래디언트":"gradient","글래스 3D":"glass","픽셀아트":"pixel","16비트 게임":"game16","컬러링북":"coloring","블랙 잉크라인":"blackline","스티커팩":"sticker","픽토그램":"pictogram","리소그래프":"riso","라인드로잉+워시":"linewash","소프트 에어브러시":"airbrush","페이퍼컷 3D":"papercut3d"};
-function carrot(name){const k=keys[name]||'flat';return `<div class="carrotPreview pv-${k}"><i class="leaf l1"></i><i class="leaf l2"></i><i class="leaf l3"></i><span class="root"></span></div>`}
-function decorateCard(btn){const strong=btn.querySelector('strong'),thumb=btn.querySelector('.thumb'),small=btn.querySelector('small'),star=btn.querySelector('.star');if(!strong||!thumb)return;const name=strong.textContent.trim();if(thumb.dataset.carrotName!==name){const icon=(thumb.dataset.originalIcon||thumb.textContent||'').trim();thumb.dataset.originalIcon=icon;thumb.dataset.carrotName=name;thumb.classList.add('exampleThumb');thumb.innerHTML=carrot(name);if(!btn.querySelector('.styleTitleNew')){const row=document.createElement('div');row.className='styleTitleNew';const mi=document.createElement('span');mi.className='miniIcon';mi.textContent=icon;row.append(mi,strong);if(star)row.append(star);btn.insertBefore(row,small||null)}}}
-function decorateSelected(){const nameEl=document.getElementById('selectedName'),box=document.getElementById('bigEmoji');if(!nameEl||!box)return;const name=nameEl.textContent.trim();if(box.dataset.carrotName!==name||!box.querySelector('.carrotPreview')){box.dataset.carrotName=name;box.className='selectedPreview';box.innerHTML=carrot(name)}}
-function addHint(){const styles=document.getElementById('styles');if(!styles||document.getElementById('carrotHint'))return;const hint=document.createElement('span');hint.id='carrotHint';hint.className='carrotHint';hint.textContent='🥕 같은 당근 예시로 그림체 차이를 비교해보세요.';styles.parentNode.insertBefore(hint,styles)}
-let scheduled=false;function decorate(){document.querySelectorAll('.style').forEach(decorateCard);decorateSelected();addHint()}function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;decorate()})}
-new MutationObserver(schedule).observe(document.documentElement,{childList:true,subtree:true,characterData:true});if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',decorate);else decorate();setTimeout(decorate,300);
+'use strict';
+const STYLE_ORDER=["파스텔 크레용","브라운 모노라인","귀여운 플랫 2D","클레이 3D","수채화","종이 콜라주","과슈","색연필","연필 스케치","펜&잉크","마커 드로잉","동화책","치비 캐릭터","카와이 스티커","미니멀 플랫","듀오톤 벡터","기하학 아이콘","얇은 모노라인","두꺼운 아웃라인","아이소메트릭","글로시 3D","매트 3D","소프트 토이 3D","풍선 3D","펠트 공예","자수","니트","도자기","목각","아크릴 페인팅","오일 페인팅","파스텔 초크","레트로 70s","레트로 80s","Y2K","빈티지 포스터","코티지코어","북유럽 미니멀","럭셔리 미니멀","에디토리얼","소프트 그래디언트","글래스 3D","픽셀아트","16비트 게임","컬러링북","블랙 잉크라인","스티커팩","픽토그램","리소그래프","라인드로잉+워시","소프트 에어브러시","페이퍼컷 3D"];
+const indexByName=new Map(STYLE_ORDER.map((name,index)=>[name,index]));
+function setSprite(el,index){
+  if(!el||index==null)return;
+  const col=index%8,row=Math.floor(index/8);
+  el.style.backgroundPosition=`${(col/7)*100}% ${(row/6)*100}%`;
+}
+function decorateCard(btn){
+  const strong=btn.querySelector('strong'),thumb=btn.querySelector('.thumb'),small=btn.querySelector('small'),star=btn.querySelector('.star');
+  if(!strong||!thumb)return;
+  const name=strong.textContent.trim(),index=indexByName.get(name);
+  if(index==null)return;
+  const icon=(thumb.dataset.originalIcon||thumb.textContent||'').trim();
+  if(icon)thumb.dataset.originalIcon=icon;
+  thumb.dataset.verifiedName=name;
+  thumb.classList.add('exampleThumb');
+  thumb.textContent='';
+  setSprite(thumb,index);
+  let row=btn.querySelector('.styleTitleNew');
+  if(!row){
+    row=document.createElement('div');row.className='styleTitleNew';
+    const mi=document.createElement('span');mi.className='miniIcon';mi.textContent=icon;
+    row.append(mi,strong);if(star)row.append(star);btn.insertBefore(row,small||null);
+  }else{
+    const mi=row.querySelector('.miniIcon');if(mi&&icon)mi.textContent=icon;
+  }
+}
+function decorateSelected(){
+  const nameEl=document.getElementById('selectedName'),box=document.getElementById('bigEmoji');
+  if(!nameEl||!box)return;
+  const name=nameEl.textContent.trim(),index=indexByName.get(name);
+  if(index==null)return;
+  box.dataset.verifiedName=name;
+  box.className='selectedPreview';
+  box.textContent='';
+  setSprite(box,index);
+}
+function addHint(){
+  const styles=document.getElementById('styles');
+  if(!styles||document.getElementById('carrotHint'))return;
+  const hint=document.createElement('span');hint.id='carrotHint';hint.className='carrotHint';
+  hint.textContent='실제 생성형 AI로 만든 같은 당근 예시예요. 생성 모델·버전에 따라 결과는 조금 달라질 수 있어요.';
+  styles.parentNode.insertBefore(hint,styles);
+}
+let scheduled=false;
+function decorate(){document.querySelectorAll('.style').forEach(decorateCard);decorateSelected();addHint()}
+function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;decorate()})}
+new MutationObserver(schedule).observe(document.documentElement,{childList:true,subtree:true,characterData:true});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',decorate);else decorate();
+setTimeout(decorate,250);
 })();
