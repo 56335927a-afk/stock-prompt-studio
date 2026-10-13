@@ -8,26 +8,28 @@
 <style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f7f3f1}iframe{border:0;width:100%;height:100%;display:block}</style>
 </head>
 <body>
-<iframe id="app" title="PickStock HQ" src="./index.html?v=hqfix6"></iframe>
+<iframe id="app" title="PickStock HQ"></iframe>
 <script>
-(function(){
+(async()=>{
   const frame=document.getElementById('app');
-  frame.addEventListener('load',()=>{
-    try{
-      const d=frame.contentDocument;
-      if(!d)return;
-      const oldCss=d.querySelector('link[href^="preview.css"]');
-      if(oldCss) oldCss.remove();
-      const css=d.createElement('link');
-      css.rel='stylesheet';
-      css.href='./preview.css?v=hqfix6';
-      d.head.appendChild(css);
-      d.querySelectorAll('script[src^="preview.js"]').forEach(s=>s.remove());
-      const js=d.createElement('script');
-      js.src='./preview.js?v=hqfix6';
-      d.body.appendChild(js);
-    }catch(e){console.error(e)}
-  });
+  const bust='hqfix8-'+Date.now();
+  try{
+    const [htmlRes,cssRes,jsRes]=await Promise.all([
+      fetch('./index.html?'+bust,{cache:'no-store'}),
+      fetch('./preview.css?'+bust,{cache:'no-store'}),
+      fetch('./preview.js?'+bust,{cache:'no-store'})
+    ]);
+    if(!htmlRes.ok||!cssRes.ok||!jsRes.ok) throw new Error('asset fetch failed');
+    let html=await htmlRes.text();
+    const css=await cssRes.text();
+    const js=await jsRes.text();
+    html=html.replace('<head>','<head><base href="https://56335927a-afk.github.io/stock-prompt-studio/">');
+    html=html.replace(/<link[^>]+href=["']preview\.css[^"']*["'][^>]*>/i,'<style>'+css+'</style>');
+    html=html.replace(/<script[^>]+src=["']preview\.js[^"']*["'][^>]*><\/script>/i,'<script>'+js.replace(/<\/script>/gi,'<\\/script>')+'<\/script>');
+    frame.srcdoc=html;
+  }catch(e){
+    frame.src='./index.html?fallback='+bust;
+  }
 })();
 </script>
 </body>
