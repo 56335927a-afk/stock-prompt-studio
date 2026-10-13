@@ -1,0 +1,71 @@
+name: Assemble HQ carrot atlas
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Assemble and verify HQ AVIF
+        shell: bash
+        run: |
+          python - <<'PY'
+          import base64, pathlib, hashlib
+          files = [pathlib.Path(f"hqavif_parts/{i:02d}.txt") for i in range(15)]
+          missing = [str(p) for p in files if not p.exists()]
+          if missing:
+              raise SystemExit(f"Missing parts: {missing}")
+          text = ''.join(p.read_text(encoding='utf-8').strip() for p in files)
+          raw = base64.b64decode(text, validate=True)
+          if len(raw) < 150000:
+              raise SystemExit(f"HQ atlas unexpectedly small: {len(raw)} bytes")
+          if raw[4:12] != b'ftypavif':
+              raise SystemExit(f"Not an AVIF file, header={raw[:16]!r}")
+          out = pathlib.Path('carrot-style-atlas-hq.avif')
+          out.write_bytes(raw)
+          print('bytes=', len(raw))
+          print('sha256=', hashlib.sha256(raw).hexdigest())
+          PY
+
+      - name: Point preview to HQ atlas and bust cache
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p = Path('preview.js')
+          s = p.read_text(encoding='utf-8')
+          s2, n = re.subn(r"const SPRITE='[^']+';", "const SPRITE='carrot-style-atlas-hq.avif?v=hqfinal1013';", s, count=1)
+          if n != 1:
+              raise SystemExit('Could not replace SPRITE in preview.js')
+          p.write_text(s2, encoding='utf-8')
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          s = re.sub(r'preview\\.css\\?v=[^\"\\']+', 'preview.css?v=hqfinal1013', s)
+          s = re.sub(r'preview\\.js\\?v=[^\"\\']+', 'preview.js?v=hqfinal1013', s)
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit generated HQ asset
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add carrot-style-atlas-hq.avif preview.js index.html
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Activate verified HQ carrot preview atlas"
+            git push origin main
+          fi
