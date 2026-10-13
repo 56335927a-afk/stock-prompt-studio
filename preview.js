@@ -1,70 +1,49 @@
 (function(){
 'use strict';
-const STYLE_ORDER=["파스텔 크레용","브라운 모노라인","귀여운 플랫 2D","클레이 3D","수채화","종이 콜라주","과슈","색연필","연필 스케치","펜&잉크","마커 드로잉","동화책","치비 캐릭터","카와이 스티커","미니멀 플랫","듀오톤 벡터","기하학 아이콘","얇은 모노라인","두꺼운 아웃라인","아이소메트릭","글로시 3D","매트 3D","소프트 토이 3D","풍선 3D","펠트 공예","자수","니트","도자기","목각","아크릴 페인팅","오일 페인팅","파스텔 초크","레트로 70s","레트로 80s","Y2K","빈티지 포스터","코티지코어","북유럽 미니멀","럭셔리 미니멀","에디토리얼","소프트 그래디언트","글래스 3D","픽셀아트","16비트 게임","컬러링북","블랙 잉크라인","스티커팩","픽토그램","리소그래프","라인드로잉+워시","소프트 에어브러시","페이퍼컷 3D"];
-const KEYS=["crayon","mono","flat","clay","water","paper","gouache","pencil","sketch","ink","marker","storybook","chibi","kawaii","minimal","duotone","geo","thin","bold","iso","glossy","matte","plush","balloon","felt","embroider","knit","ceramic","wood","acrylic","oil","chalk","retro70","retro80","y2k","poster","cottage","scandi","luxury","editorial","gradient","glass","pixel","game16","coloring","blackline","sticker","pictogram","riso","linewash","airbrush","papercut3d"];
-const indexByName=new Map(STYLE_ORDER.map((name,index)=>[name,index]));
-const cache=new Map();
-function esc(s){return encodeURIComponent(s).replace(/'/g,'%27').replace(/"/g,'%22')}
-function pixelSVG(game){const a=game?'#F05E23':'#F27B22',b=game?'#FFB52E':'#FF9A35',g=game?'#2E8B57':'#5C9E4B',g2=game?'#45C068':'#83BE5B';const rects=[[384,352,192,64,b],[352,416,256,64,a],[320,480,288,64,a],[288,544,288,64,a],[288,608,256,64,a],[320,672,192,64,a],[352,736,128,64,a],[384,800,64,64,a],[512,288,64,96,g],[576,224,64,128,g2],[640,160,64,128,g],[704,224,64,64,g2],[480,224,64,96,g2]].map(r=>`<rect x="${r[0]}" y="${r[1]}" width="${r[2]}" height="${r[3]}" fill="${r[4]}"/>`).join('');const detail=game?'<rect x="352" y="480" width="32" height="32" fill="#C94B24"/><rect x="512" y="544" width="32" height="32" fill="#C94B24"/><rect x="384" y="672" width="32" height="32" fill="#C94B24"/>':'';return `<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" shape-rendering="crispEdges">${rects}${detail}</svg>`}
-function svgFor(index){if(cache.has(index))return cache.get(index);const k=KEYS[index]||'flat';if(k==='pixel'||k==='game16'){const u=`data:image/svg+xml,${esc(pixelSVG(k==='game16'))}`;cache.set(index,u);return u}let fill='#F68A2D',leaf='#77A95A',stroke='#6B4B3F',sw=14,op=1,filter='',extra='',face='',groove=.34;
-if(k==='crayon'){fill='#F6904E';leaf='#73A85C';stroke='#815B4B';sw=14;filter='filter="url(#rough)"'}
-if(k==='mono'){fill='none';leaf='none';stroke='#6B4B3F';sw=18;groove=.22}
-if(k==='flat'){fill='#F68A2D';leaf='#77A95A';stroke='#6B4B3F';sw=16}
-if(k==='clay'){fill='url(#bodyGrad)';leaf='url(#leafGrad)';stroke='none';sw=0;filter='filter="url(#shadow)"'}
-if(k==='water'){fill='#F88E53';leaf='#7EAF68';stroke='#B16F54';sw=6;op=.82;filter='filter="url(#rough)"';extra='<ellipse cx="430" cy="520" rx="155" ry="305" fill="#F9A678" opacity=".16"/>'}
-if(k==='paper'){fill='#F58C3E';leaf='#6FA153';stroke='none';sw=0;filter='filter="url(#shadow)"';extra='<path d="M342 362 C430 315 560 365 615 462" fill="none" stroke="#FFD0A6" stroke-width="22" opacity=".48"/>'}
-if(k==='gouache'){fill='#ED7B32';leaf='#70904F';stroke='#754F43';sw=8;filter='filter="url(#grain)"'}
-if(k==='pencil'){fill='#F8A06A';leaf='#88AA70';stroke='#6D5B55';sw=7;extra='<path d="M310 470L550 410M300 545L560 480M300 620L520 555M310 690L470 635" stroke="#5C4D46" stroke-width="4" opacity=".22"/>'}
-if(k==='sketch'){fill='#F7F4F0';leaf='#F7F4F0';stroke='#55504D';sw=8;groove=.58}
-if(k==='ink'){fill='#FFFDFC';leaf='#FFFDFC';stroke='#272321';sw=10;groove=.75}
-if(k==='marker'){fill='#FF9A48';leaf='#79B45F';stroke='#694C40';sw=11;op=.92}
-if(k==='storybook'){fill='#F08D4E';leaf='#789E5D';stroke='#7E5A4D';sw=10;filter='filter="url(#grain)"'}
-if(k==='chibi'){fill='#F88E37';leaf='#7AB65E';stroke='#63473D';sw=14;face='<circle cx="405" cy="515" r="14" fill="#5B4037"/><circle cx="482" cy="515" r="14" fill="#5B4037"/><path d="M418 552 Q444 576 469 551" fill="none" stroke="#5B4037" stroke-width="8" stroke-linecap="round"/>'}
-if(k==='kawaii'){fill='#FF973E';leaf='#82BC62';stroke='#604439';sw=15;face='<circle cx="400" cy="510" r="15" fill="#4B352F"/><circle cx="485" cy="510" r="15" fill="#4B352F"/><circle cx="374" cy="548" r="19" fill="#F6A0A7" opacity=".8"/><circle cx="511" cy="548" r="19" fill="#F6A0A7" opacity=".8"/><path d="M419 550 Q443 572 467 550" fill="none" stroke="#4B352F" stroke-width="7" stroke-linecap="round"/>'}
-if(k==='minimal'){fill='#F38939';leaf='#6FA15B';stroke='none';sw=0;groove=.22}
-if(k==='duotone'){fill='#F09A5A';leaf='#5E8B83';stroke='#6A4C43';sw=10}
-if(k==='geo'){fill='#EF8A37';leaf='#779D53';stroke='#655047';sw=8;extra='<path d="M338 404 L530 385 L610 500 L570 650 L430 825 L330 715 L300 545Z" fill="#E9762C" opacity=".18"/>'}
-if(k==='thin'){fill='#FFFDFB';leaf='#FFFDFB';stroke='#7C584C';sw=6}
-if(k==='bold'){fill='#F79036';leaf='#75A95C';stroke='#523B34';sw=24}
-if(k==='iso'){fill='url(#bodyGrad)';leaf='url(#leafGrad)';stroke='#704C40';sw=7;filter='filter="url(#shadow)"';extra='<path d="M620 410 L656 438 L642 690 L482 862 L452 832 L588 650Z" fill="#C95E19" opacity=".22"/>'}
-if(k==='glossy'){fill='url(#bodyGrad)';leaf='url(#leafGrad)';stroke='none';sw=0;filter='filter="url(#shadow)"';extra='<ellipse cx="408" cy="488" rx="65" ry="185" fill="url(#shine)" transform="rotate(-10 408 488)"/>'}
-if(k==='matte'){fill='#EE7C2D';leaf='#648E4F';stroke='none';sw=0;filter='filter="url(#shadow)"'}
-if(k==='plush'){fill='#F28E42';leaf='#6F9B58';stroke='#B46E42';sw=8;filter='filter="url(#fuzzy)"';extra='<path d="M350 400L520 410M330 485L540 490M315 570L510 575M300 650L465 654" stroke="#FFD2B4" stroke-width="6" stroke-dasharray="6 13" opacity=".62"/>'}
-if(k==='balloon'){fill='url(#bodyGrad)';leaf='#80BB63';stroke='#D86B20';sw=5;filter='filter="url(#shadow)"';extra='<ellipse cx="420" cy="470" rx="70" ry="190" fill="url(#shine)"/>'}
-if(k==='felt'){fill='#E98A45';leaf='#6C985B';stroke='#B56E4B';sw=6;filter='filter="url(#fuzzy)"'}
-if(k==='embroider'){fill='#F08F46';leaf='#6EA05A';stroke='#7C5A4B';sw=8;extra='<path d="M320 460h250M308 535h265M305 610h230M315 682h180" stroke="#fff" stroke-width="5" stroke-dasharray="7 12" opacity=".46"/>'}
-if(k==='knit'){fill='#EB8A42';leaf='#6F9B59';stroke='#9B654C';sw=6;extra='<path d="M330 448q16-25 32 0t32 0t32 0t32 0t32 0M315 530q16-25 32 0t32 0t32 0t32 0t32 0M308 612q16-25 32 0t32 0t32 0t32 0" fill="none" stroke="#fff" stroke-width="7" opacity=".32"/>'}
-if(k==='ceramic'){fill='#F29A61';leaf='#7AA06A';stroke='#B8765E';sw=6;filter='filter="url(#shadow)"';extra='<ellipse cx="405" cy="470" rx="55" ry="180" fill="#fff" opacity=".28"/>'}
-if(k==='wood'){fill='#C98955';leaf='#8F7E52';stroke='#72513C';sw=8;extra='<path d="M365 390Q400 420 515 393M340 464Q395 505 540 468M315 545Q388 586 510 550M296 626Q358 668 465 635" fill="none" stroke="#8D5B3F" stroke-width="5" opacity=".55"/>'}
-if(k==='acrylic'){fill='#F58238';leaf='#5F9A4B';stroke='#704A3C';sw=7;filter='filter="url(#rough)"'}
-if(k==='oil'){fill='#E97B36';leaf='#618D4C';stroke='#60463C';sw=8;filter='filter="url(#grain)"';extra='<path d="M345 400C410 365 500 388 555 430" fill="none" stroke="#FFB273" stroke-width="28" stroke-linecap="round" opacity=".45"/>'}
-if(k==='chalk'){fill='#F29866';leaf='#7EA46C';stroke='#9A7868';sw=10;op=.88;filter='filter="url(#fuzzy)"'}
-if(k==='retro70'){fill='#D7773B';leaf='#7A8F4A';stroke='#5E473B';sw=13}
-if(k==='retro80'){fill='#F77C5C';leaf='#5A9A8D';stroke='#553B62';sw=12;extra='<path d="M337 402Q440 365 550 410" fill="none" stroke="#F4D35E" stroke-width="18" opacity=".7"/>'}
-if(k==='y2k'){fill='url(#bodyGrad)';leaf='#82C1A6';stroke='#7B5688';sw=9;filter='filter="url(#shadow)"';extra='<circle cx="560" cy="430" r="17" fill="#fff"/><path d="M540 430h40M560 410v40" stroke="#fff" stroke-width="6" stroke-linecap="round"/>'}
-if(k==='poster'){fill='#D86D36';leaf='#637F4E';stroke='#493B33';sw=16;filter='filter="url(#grain)"'}
-if(k==='cottage'){fill='#E98643';leaf='#6D9259';stroke='#715348';sw=9;filter='filter="url(#grain)"';extra='<circle cx="553" cy="394" r="15" fill="#F2D77C"/><circle cx="570" cy="407" r="12" fill="#FFF1C2"/><circle cx="540" cy="412" r="10" fill="#FFF1C2"/>'}
-if(k==='scandi'){fill='#D98D55';leaf='#769382';stroke='none';sw=0}
-if(k==='luxury'){fill='#E7B08A';leaf='#8A8E73';stroke='#6A5147';sw=7}
-if(k==='editorial'){fill='#EB7D47';leaf='#547F6B';stroke='#4E3F3B';sw=5;extra='<path d="M326 420Q430 350 570 420" fill="none" stroke="#F3C16D" stroke-width="22" opacity=".55"/>'}
-if(k==='gradient'){fill='url(#bodyGrad)';leaf='url(#leafGrad)';stroke='none';sw=0}
-if(k==='glass'){fill='#F59A67';leaf='#8BC3A0';stroke='#fff';sw=5;op=.62;filter='filter="url(#shadow)"';extra='<ellipse cx="405" cy="485" rx="60" ry="180" fill="#fff" opacity=".25"/>'}
-if(k==='coloring'){fill='#fff';leaf='#fff';stroke='#2B2928';sw=12}
-if(k==='blackline'){fill='none';leaf='none';stroke='#111';sw=15}
-if(k==='sticker'){fill='#F58E35';leaf='#79AF5C';stroke='#5B4038';sw=14;extra='<path d="M332 348C380 309 480 314 558 360C632 403 667 485 642 566C620 643 558 721 468 829C441 861 410 874 380 854C342 828 323 779 311 714C296 633 285 541 291 468C294 415 304 374 332 348Z" fill="none" stroke="#fff" stroke-width="44" stroke-linejoin="round"/>'}
-if(k==='pictogram'){fill='#ED8735';leaf='#668B56';stroke='none';sw=0;groove=0}
-if(k==='riso'){fill='#E66A48';leaf='#5D7FA1';stroke='#3B3C4F';sw=7;extra='<circle cx="390" cy="470" r="12" fill="#8C5EA8" opacity=".25"/><circle cx="510" cy="610" r="10" fill="#8C5EA8" opacity=".22"/><circle cx="420" cy="700" r="9" fill="#E55F44" opacity=".24"/>'}
-if(k==='linewash'){fill='#F5A47B';leaf='#91B782';stroke='#6C5046';sw=7;op=.78}
-if(k==='airbrush'){fill='url(#bodyGrad)';leaf='url(#leafGrad)';stroke='none';sw=0;filter='filter="url(#shadow)"';extra='<ellipse cx="420" cy="500" rx="120" ry="255" fill="#FFD0A6" opacity=".20" filter="url(#blur)"/>'}
-if(k==='papercut3d'){fill='#EF8844';leaf='#6F9E58';stroke='none';sw=0;filter='filter="url(#shadow)"';extra='<path d="M356 370C430 340 545 382 600 455C570 430 540 430 512 438C436 458 380 520 332 590C325 506 320 420 356 370Z" fill="#FFB37C" opacity=".45"/>'}
-const body='M332 348C380 309 480 314 558 360C632 403 667 485 642 566C620 643 558 721 468 829C441 861 410 874 380 854C342 828 323 779 311 714C296 633 285 541 291 468C294 415 304 374 332 348Z';const leaves='<path d="M555 375C580 285 650 200 710 150C728 135 746 148 738 170C707 260 646 333 577 401Z"/><path d="M545 382C530 290 548 195 578 124C586 103 610 104 614 126C626 211 610 302 570 398Z"/><path d="M565 388C620 320 708 275 785 256C806 251 817 272 801 288C733 350 650 392 585 417Z"/><path d="M536 375C493 304 470 224 476 157C478 136 501 130 513 147C556 208 574 289 560 390Z"/><path d="M575 398C650 373 738 372 805 395C824 402 824 426 804 432C723 454 645 444 581 423Z"/>';const sa=stroke!=='none'&&sw?`stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round" stroke-linecap="round"`:'stroke="none"';const grooveStroke=stroke!=='none'?stroke:'#D46218';const defs='<linearGradient id="bodyGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA64D"/><stop offset=".55" stop-color="#F47C20"/><stop offset="1" stop-color="#D95E16"/></linearGradient><linearGradient id="leafGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#80B85B"/><stop offset="1" stop-color="#3E7A33"/></linearGradient><radialGradient id="shine" cx=".35" cy=".25" r=".65"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset=".35" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="18" dy="24" stdDeviation="18" flood-color="#54392f" flood-opacity=".22"/></filter><filter id="rough" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".025" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="8"/></filter><filter id="grain" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".55" numOctaves="2" seed="7" result="n"/><feComposite in="n" in2="SourceGraphic" operator="in" result="t"/><feBlend in="SourceGraphic" in2="t" mode="multiply"/></filter><filter id="fuzzy" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="5" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.5"/></filter><filter id="blur"><feGaussianBlur stdDeviation="2"/></filter>';const grooves=groove?`<g fill="none" stroke="${grooveStroke}" stroke-width="${Math.max(4,sw?Math.floor(sw/2):5)}" stroke-linecap="round" opacity="${groove}"><path d="M365 414Q434 389 519 409"/><path d="M339 487Q431 464 548 489"/><path d="M317 565Q406 548 520 570"/><path d="M300 642Q376 630 474 649"/><path d="M291 716Q347 708 424 719"/></g>`:'';const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024"><defs>${defs}</defs><g ${filter} opacity="${op}">${extra}<g fill="${leaf}" ${sa}>${leaves}</g><path d="${body}" fill="${fill}" ${sa}/>${grooves}${face}</g></svg>`;const u=`data:image/svg+xml,${esc(svg)}`;cache.set(index,u);return u}
-function setPreview(el,index){if(!el||index==null)return;el.style.backgroundImage=`url("${svgFor(index)}")`;el.style.backgroundPosition='center';el.style.backgroundSize='contain';el.style.backgroundRepeat='no-repeat'}
-function ensureModal(){let modal=document.getElementById('previewModal');if(modal)return modal;modal=document.createElement('div');modal.id='previewModal';modal.className='previewModal';modal.innerHTML='<div class="previewModalCard"><button class="previewModalClose" type="button" aria-label="닫기">×</button><div class="previewModalImage"></div><div class="previewModalName"></div><div class="previewModalNote">같은 당근을 기준으로 그림체 차이를 비교하는 1024×1024 예시예요. 실제 생성 결과는 모델·버전에 따라 조금 달라질 수 있어요.</div></div>';document.body.appendChild(modal);const close=()=>{modal.classList.remove('open');document.body.style.overflow=''};modal.querySelector('.previewModalClose').onclick=close;modal.addEventListener('click',e=>{if(e.target===modal)close()});document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});return modal}
-function openModal(name,index){const modal=ensureModal(),img=modal.querySelector('.previewModalImage');setPreview(img,index);modal.querySelector('.previewModalName').textContent=name;modal.classList.add('open');document.body.style.overflow='hidden'}
-function decorateCard(btn){const strong=btn.querySelector('strong'),thumb=btn.querySelector('.thumb'),small=btn.querySelector('small'),star=btn.querySelector('.star');if(!strong||!thumb)return;const name=strong.textContent.trim(),index=indexByName.get(name);if(index==null)return;const icon=(thumb.dataset.originalIcon||thumb.textContent||'').trim();if(icon)thumb.dataset.originalIcon=icon;thumb.classList.add('exampleThumb','verifiedPreview');thumb.classList.remove('pendingPreview');thumb.textContent='';setPreview(thumb,index);thumb.title='눌러서 크게 보기';thumb.onclick=e=>{e.stopPropagation();openModal(name,index)};let row=btn.querySelector('.styleTitleNew');if(!row){row=document.createElement('div');row.className='styleTitleNew';const mi=document.createElement('span');mi.className='miniIcon';mi.textContent=icon;row.append(mi,strong);if(star)row.append(star);btn.insertBefore(row,small||null)}else{const mi=row.querySelector('.miniIcon');if(mi&&icon)mi.textContent=icon}}
-function decorateSelected(){const nameEl=document.getElementById('selectedName'),box=document.getElementById('bigEmoji');if(!nameEl||!box)return;const name=nameEl.textContent.trim(),index=indexByName.get(name);if(index==null)return;box.className='selectedPreview verifiedSelected';box.textContent='';setPreview(box,index);box.title='눌러서 크게 보기';box.onclick=()=>openModal(name,index)}
-function addHint(){const styles=document.getElementById('styles');if(!styles)return;let hint=document.getElementById('carrotHint');if(!hint){hint=document.createElement('span');hint.id='carrotHint';hint.className='carrotHint';styles.parentNode.insertBefore(hint,styles)}hint.textContent='52개 그림체 모두 같은 당근 기준 예시로 통일했어요. 카드를 누르면 크게 비교할 수 있어요.'}
-let scheduled=false;function decorate(){document.querySelectorAll('.style').forEach(decorateCard);decorateSelected();addHint();ensureModal()}function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;decorate()})}
+function decorateCard(btn){
+  const thumb=btn.querySelector('.thumb');
+  if(!thumb)return;
+  const icon=(thumb.dataset.originalIcon||thumb.textContent||'').trim();
+  if(icon)thumb.dataset.originalIcon=icon;
+  thumb.className='thumb actualPreviewPending';
+  thumb.textContent='';
+  thumb.removeAttribute('style');
+  thumb.title='실제 프롬프트 검증 이미지 준비 중';
+  thumb.onclick=null;
+}
+function decorateSelected(){
+  const box=document.getElementById('bigEmoji');
+  if(!box)return;
+  box.className='actualSelectedPending';
+  box.textContent='';
+  box.removeAttribute('style');
+  box.title='실제 프롬프트 검증 이미지 준비 중';
+  box.onclick=null;
+}
+function addHint(){
+  const styles=document.getElementById('styles');
+  if(!styles)return;
+  let hint=document.getElementById('carrotHint');
+  if(!hint){
+    hint=document.createElement('span');
+    hint.id='carrotHint';
+    hint.className='carrotHint';
+    styles.parentNode.insertBefore(hint,styles);
+  }
+  hint.textContent='실제 PickStock 스타일 프롬프트로 생성·확인된 고화질 당근 이미지만 순차적으로 표시합니다. 현재 검증 완료 0/52.';
+}
+let scheduled=false;
+function decorate(){
+  document.querySelectorAll('.style').forEach(decorateCard);
+  decorateSelected();
+  addHint();
+}
+function schedule(){
+  if(scheduled)return;
+  scheduled=true;
+  requestAnimationFrame(()=>{scheduled=false;decorate();});
+}
 new MutationObserver(schedule).observe(document.documentElement,{childList:true,subtree:true,characterData:true});
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',decorate);else decorate();setTimeout(decorate,250);
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',decorate);else decorate();
+setTimeout(decorate,250);
 })();
