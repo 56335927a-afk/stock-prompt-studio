@@ -1,1 +1,6 @@
-HQ preview mode uses per-style 1024x1024 SVG previews generated in-browser from the PickStock style mapping. Added to document the high-resolution preview switch.
+The main index.html directly loads the binary carrot-style-atlas-hq.avif.
+Verified: 208266 bytes, AVIF header, 1256x4082 pixels, 4 columns x 13 rows.
+Each native tile is 314x314 pixels; this is not a 1024x1024-per-style master.
+SHA256: 7af38b46046c016882d2c7b3f8c737b0f547158e3c6d08b75fdd3d8e4d393918
+The binary is identical to strict Base64 decoding of hqavif_parts/00.txt through 14.txt.
+No SVG replacement or old verified-sprite asset is used by preview.js.
