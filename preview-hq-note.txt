@@ -1,0 +1,1 @@
+HQ preview mode uses per-style 1024x1024 SVG previews generated in-browser from the PickStock style mapping. Added to document the high-resolution preview switch.
