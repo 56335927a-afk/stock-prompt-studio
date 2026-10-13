@@ -12,8 +12,9 @@ function spritePos(index){
 }
 function applyPreview(el,index,selected){
   if(!el||index<0)return;
-  el.className=selected?'actualSelectedPreview':'thumb actualPreview';
-  el.textContent='';
+  const wantedClass=selected?'actualSelectedPreview':'thumb actualPreview';
+  if(el.className!==wantedClass)el.className=wantedClass;
+  if(el.textContent)el.textContent='';
   el.style.backgroundImage=`url("${ATLAS}")`;
   el.style.backgroundSize=`${COLS*100}% ${ROWS*100}%`;
   el.style.backgroundPosition=spritePos(index);
@@ -41,7 +42,8 @@ function addHint(){
     hint.className='carrotHint';
     styles.parentNode.insertBefore(hint,styles);
   }
-  hint.textContent='같은 당근 오브젝트를 기준으로, PickStock에 등록된 각 스타일 프롬프트 순서대로 만든 예시 이미지입니다.';
+  const text='같은 당근 오브젝트를 기준으로, PickStock에 등록된 각 스타일 프롬프트 순서대로 만든 예시 이미지입니다.';
+  if(hint.textContent!==text)hint.textContent=text;
 }
 let scheduled=false;
 function decorate(){
