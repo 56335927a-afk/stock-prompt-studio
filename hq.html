@@ -1,1 +1,34 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PickStock HQ</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f7f3f1}iframe{border:0;width:100%;height:100%;display:block}</style></head><body><iframe id="app" title="PickStock HQ"></iframe><script>(async()=>{const f=document.getElementById('app');try{let h=await fetch('./index.html?v=finalhq4',{cache:'no-store'}).then(r=>r.text());h=h.replace(/preview\.css\?v=[^\"']+/g,'preview.css?v=finalhq4').replace(/preview\.js\?v=[^\"']+/g,'preview.js?v=finalhq4');f.srcdoc=h}catch(e){f.src='./?v=finalhq4'}})();</script></body></html>
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>PickStock HQ</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f7f3f1}iframe{border:0;width:100%;height:100%;display:block}</style>
+</head>
+<body>
+<iframe id="app" title="PickStock HQ" src="./index.html?v=hqfix6"></iframe>
+<script>
+(function(){
+  const frame=document.getElementById('app');
+  frame.addEventListener('load',()=>{
+    try{
+      const d=frame.contentDocument;
+      if(!d)return;
+      const oldCss=d.querySelector('link[href^="preview.css"]');
+      if(oldCss) oldCss.remove();
+      const css=d.createElement('link');
+      css.rel='stylesheet';
+      css.href='./preview.css?v=hqfix6';
+      d.head.appendChild(css);
+      d.querySelectorAll('script[src^="preview.js"]').forEach(s=>s.remove());
+      const js=d.createElement('script');
+      js.src='./preview.js?v=hqfix6';
+      d.body.appendChild(js);
+    }catch(e){console.error(e)}
+  });
+})();
+</script>
+</body>
+</html>
